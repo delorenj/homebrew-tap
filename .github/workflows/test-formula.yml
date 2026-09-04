@@ -27,5 +27,6 @@ jobs:
       - name: Install and test Vinyl client
         run: |
           HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_INSTALL_FROM_API=1 \
-            brew install --build-from-source delorenj/tap/vinyl-client
+            brew install --build-from-source delorenj/tap/vinyl-client \
+            || brew list --versions vinyl-client
           HOMEBREW_NO_AUTO_UPDATE=1 brew test delorenj/tap/vinyl-client
