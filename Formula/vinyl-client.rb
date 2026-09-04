@@ -51,7 +51,7 @@ class VinylClient < Formula
       #!/bin/sh
       exec "#{opt_bin}/vinyl" toggle
     EOS
-    chmod 0755, bin/"vinyl", bin/"vinyl-toggle"
+    chmod 0755, [bin/"vinyl", bin/"vinyl-toggle"]
   end
 
   service do
