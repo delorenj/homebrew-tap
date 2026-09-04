@@ -76,6 +76,6 @@ class VinylClient < Formula
   test do
     help = shell_output("#{bin}/vinyl --help")
     assert_match "{client,setup,doctor,toggle,start,stop,cancel,status}", help
-    assert_no_match "{daemon", help
+    raise "client archive advertised recognizer modes" if help.include?("{daemon")
   end
 end
