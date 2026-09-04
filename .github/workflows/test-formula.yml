@@ -1,0 +1,31 @@
+name: Test formula
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - Formula/**
+      - .github/workflows/test-formula.yml
+  pull_request:
+    paths:
+      - Formula/**
+      - .github/workflows/test-formula.yml
+
+permissions:
+  contents: read
+
+jobs:
+  install:
+    name: Homebrew install (${{ matrix.runner }})
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [macos-13, macos-14]
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install and test Vinyl client
+        run: |
+          brew update
+          HOMEBREW_NO_INSTALL_FROM_API=1 brew install --build-from-source delorenj/tap/vinyl-client
+          brew test delorenj/tap/vinyl-client
