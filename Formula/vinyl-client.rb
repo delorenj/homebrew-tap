@@ -17,8 +17,13 @@ class VinylClient < Formula
   def install
     odie "vinyl-client is macOS-only" unless OS.mac?
 
-    package_root = buildpath/"vinyl-client_#{version}_macos"
-    odie "release archive is missing #{package_root.basename}" unless package_root.directory?
+    # Homebrew strips a single archive root while staging, so the payload is
+    # directly under buildpath even though the release tarball has a named
+    # top-level directory.
+    package_root = buildpath
+    unless (package_root/"CLIENT_ONLY").file? && (package_root/"bin/vinyl").file?
+      odie "release archive is missing the Vinyl client payload"
+    end
 
     package_root.children.each { |child| libexec.install child }
     python = Formula["python@3.13"].opt_bin/"python3.13"
@@ -26,7 +31,9 @@ class VinylClient < Formula
 
     resource("homebrew-wheelhouse").stage do
       arch = Hardware::CPU.arm? ? "arm64" : "x86_64"
-      wheel_root = Dir["*/#{arch}"].first
+      # Resource staging follows the same root-stripping rule. Keep the
+      # fallback for a manually extracted wheelhouse during local debugging.
+      wheel_root = Dir.exist?(arch) ? arch : Dir["*/#{arch}"].first
       odie "wheelhouse is missing #{arch} wheels" unless wheel_root
 
       wheels = Dir[File.join(wheel_root, "*.whl")].sort
