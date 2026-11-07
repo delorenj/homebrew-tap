@@ -1,17 +1,17 @@
 class VinylClient < Formula
   desc "Live dictation thin client for macOS"
   homepage "https://github.com/delorenj/vinyl-client-releases"
-  url "https://github.com/delorenj/vinyl-client-releases/releases/download/v0.2.6/vinyl-client_0.2.6_macos.tar.gz"
-  version "0.2.6"
-  sha256 "fac8e5005ca6b1ee33da1f7330df1d024971cb1c2e8b16e8d8e9b2aabf96d407"
+  url "https://github.com/delorenj/vinyl-client-releases/releases/download/v0.4.1/vinyl-client_0.4.1_macos.tar.gz"
+  version "0.4.1"
+  sha256 "dd1914f1605638e850ca59c0a9b5f29387436a36ca18da9887f595c400b6837b"
 
   on_macos do
     depends_on "python@3.13"
   end
 
   resource "homebrew-wheelhouse" do
-    url "https://github.com/delorenj/vinyl-client-releases/releases/download/v0.2.6/vinyl-client_0.2.6_homebrew-wheelhouse.tar.gz"
-    sha256 "8fb103ba520da79cbf8191dd016038e8df4eee8cb3ff3e89e4b836d381ecf591"
+    url "https://github.com/delorenj/vinyl-client-releases/releases/download/v0.4.1/vinyl-client_0.4.1_homebrew-wheelhouse.tar.gz"
+    sha256 "3b6856236c83420628d9c3a3b1bd105c6d71f68528b0736c84753061b26d19c3"
   end
 
   def install
@@ -75,7 +75,9 @@ class VinylClient < Formula
 
   test do
     help = shell_output("#{bin}/vinyl --help")
-    assert_match "{client,setup,doctor,toggle,start,stop,cancel,status}", help
+    assert_match "{client,setup,doctor,toggle,start,stop,cancel,status,trace,fix}", help
     raise "client archive advertised recognizer modes" if help.include?("{daemon")
+    assert_match "trace", shell_output("#{bin}/vinyl trace --help")
+    assert_match "fix", shell_output("#{bin}/vinyl fix --help")
   end
 end
