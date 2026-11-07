@@ -20,13 +20,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runner: [macos-14, macos-15-intel]
+        runner: [macos-15, macos-15-intel]
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v4
       - name: Install and test Vinyl client
         run: |
           HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_INSTALL_FROM_API=1 \
-            brew install --build-from-source delorenj/tap/vinyl-client \
-            || brew list --versions vinyl-client
+            brew install --build-from-source delorenj/tap/vinyl-client
           HOMEBREW_NO_AUTO_UPDATE=1 brew test delorenj/tap/vinyl-client
