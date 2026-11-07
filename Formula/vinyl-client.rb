@@ -1,17 +1,17 @@
 class VinylClient < Formula
   desc "Live dictation thin client for macOS"
   homepage "https://github.com/delorenj/vinyl-client-releases"
-  url "https://github.com/delorenj/vinyl-client-releases/releases/download/v0.4.1/vinyl-client_0.4.1_macos.tar.gz"
-  version "0.4.1"
-  sha256 "dd1914f1605638e850ca59c0a9b5f29387436a36ca18da9887f595c400b6837b"
+  url "https://github.com/delorenj/vinyl-client-releases/releases/download/v0.4.2/vinyl-client_0.4.2_macos.tar.gz"
+  version "0.4.2"
+  sha256 "4d5817c08dfd0213a8d22b9399df8f44a36027cd977c00861022c99bc5b45030"
 
   on_macos do
     depends_on "python@3.13"
   end
 
   resource "homebrew-wheelhouse" do
-    url "https://github.com/delorenj/vinyl-client-releases/releases/download/v0.4.1/vinyl-client_0.4.1_homebrew-wheelhouse.tar.gz"
-    sha256 "3b6856236c83420628d9c3a3b1bd105c6d71f68528b0736c84753061b26d19c3"
+    url "https://github.com/delorenj/vinyl-client-releases/releases/download/v0.4.2/vinyl-client_0.4.2_homebrew-wheelhouse.tar.gz"
+    sha256 "ce9439c986d34414b4261e6ad55626ed2109ef54c0f07211ab7af1e67aaa870b"
   end
 
   def install
@@ -70,6 +70,10 @@ class VinylClient < Formula
 
       The first dictation requires macOS Microphone and Accessibility permission.
       Bind `vinyl-toggle` with your preferred macOS shortcut manager.
+      Optional native menu-bar/settings UI (after configuring the client):
+        open "#{opt_libexec}/HeyMa.app"
+      Copy that app to ~/Applications for Finder/Spotlight discovery. The direct
+      installer also installs the UI there; do not run it over a Brew-managed client.
     EOS
   end
 
