@@ -1,17 +1,18 @@
 name: Test tap
 
 on:
+  workflow_dispatch:
   push:
     branches: [main]
     paths:
       - Formula/**
       - Casks/**
-      - .github/workflows/test-formula.yml
+      - .github/workflows/test-tap.yml
   pull_request:
     paths:
       - Formula/**
       - Casks/**
-      - .github/workflows/test-formula.yml
+      - .github/workflows/test-tap.yml
 
 permissions:
   contents: read
