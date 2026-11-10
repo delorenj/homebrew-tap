@@ -20,7 +20,9 @@ cask "heyma" do
   # quarantine onto the staged bundle; clear it there, before the move into the
   # app directory, so the first launch is not blocked by Gatekeeper.
   preflight_steps do
-    run "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "{{staged_path}}/HeyMa.app"]
+    # Not fatal: under --no-quarantine there is no attribute to remove.
+    run "/usr/bin/xattr", args:         ["-dr", "com.apple.quarantine", "{{staged_path}}/HeyMa.app"],
+                          must_succeed: false
   end
 
   uninstall quit: "sh.delo.heyma"
@@ -40,6 +42,8 @@ cask "heyma" do
 
     A Mac that already runs the direct-installer client works as-is; do not add a
     Brew client next to it. If the direct installer put a copy at
-    ~/Applications/HeyMa.app, remove it so only one HeyMa is registered.
+    ~/Applications/HeyMa.app, quit it and remove it so only one HeyMa is
+    registered. Its "Open HeyMa at login" agent still points at that old copy:
+    open the new app's settings and toggle that option off and on again.
   EOS
 end

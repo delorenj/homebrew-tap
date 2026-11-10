@@ -1,5 +1,7 @@
 # DeLorenzo Homebrew Tap
 
+Homebrew formulas and casks for DeLorenzo software.
+
 ```sh
 brew tap delorenj/tap
 ```
@@ -18,7 +20,6 @@ scp vinyl-server:~/.config/vinyl/server.token ~/.config/vinyl/token
 vinyl setup --server vinyl-server:7733
 brew services start vinyl-client
 ```
-Homebrew formulas for DeLorenzo software
 
 HeyMa is the native menu-bar and settings app for that client. The cask installs
 `HeyMa.app` into `/Applications`; it needs a configured client (Brew or the
