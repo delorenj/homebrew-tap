@@ -1,6 +1,6 @@
 cask "heyma" do
-  version "0.4.3"
-  sha256 "33eec78d91ffb93a816cf4d92752094da35a8f2f5427af22b3261b18d2c64f9a"
+  version "0.4.4"
+  sha256 "dfb1fc6b8292108ed439a55b800ae7cb524c507dc2e5df16b054a89a77aab391"
 
   url "https://github.com/delorenj/vinyl-client-releases/releases/download/v#{version}/HeyMa-#{version}-macos-universal.zip"
   name "HeyMa"
