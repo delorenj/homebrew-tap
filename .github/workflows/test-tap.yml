@@ -63,7 +63,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Tap this checkout
-        run: brew tap delorenj/tap "$GITHUB_WORKSPACE"
+        run: |
+          brew tap delorenj/tap "$GITHUB_WORKSPACE"
+          # Newer Homebrew refuses to load non-official taps for style/audit/info
+          # until trusted; installing by full name trusts the item implicitly.
+          if brew trust --help >/dev/null 2>&1; then brew trust --tap delorenj/tap; fi
       - name: Style and audit
         run: |
           brew style --cask delorenj/tap/heyma
