@@ -70,10 +70,10 @@ class VinylClient < Formula
 
       The first dictation requires macOS Microphone and Accessibility permission.
       Bind `vinyl-toggle` with your preferred macOS shortcut manager.
-      Optional native menu-bar/settings UI (after configuring the client):
-        open "#{opt_libexec}/HeyMa.app"
-      Copy that app to ~/Applications for Finder/Spotlight discovery. The direct
-      installer also installs the UI there; do not run it over a Brew-managed client.
+      Native menu-bar/settings UI, installed into /Applications:
+        brew install --cask delorenj/tap/heyma
+      (A copy also ships at "#{opt_libexec}/HeyMa.app".) Do not run the direct
+      installer over a Brew-managed client.
     EOS
   end
 

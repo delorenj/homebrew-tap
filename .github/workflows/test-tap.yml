@@ -1,0 +1,98 @@
+name: Test tap
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - Formula/**
+      - Casks/**
+      - .github/workflows/test-formula.yml
+  pull_request:
+    paths:
+      - Formula/**
+      - Casks/**
+      - .github/workflows/test-formula.yml
+
+permissions:
+  contents: read
+
+jobs:
+  install:
+    name: Homebrew install (${{ matrix.runner }})
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [macos-15, macos-15-intel]
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Remove conflicting image Python links on Intel
+        if: matrix.runner == 'macos-15-intel'
+        run: |
+          # The runner image prelinks python.org's 3.13 into Homebrew's bin.
+          # Inspect and remove only those symlinks; leave every other tool alone.
+          for name in idle3.13 pip3.13 pydoc3.13 python3.13 python3.13-config; do
+            path="/usr/local/bin/$name"
+            if [ -L "$path" ]; then
+              target="$(readlink "$path")"
+              printf 'Inspecting runner-image symlink: %s -> %s\n' "$path" "$target"
+              case "$target" in
+                *Library/Frameworks/Python.framework/Versions/3.13/bin/*)
+                  printf 'Removing runner-image symlink: %s -> %s\n' "$path" "$target"
+                  rm "$path"
+                  ;;
+              esac
+            fi
+          done
+      - name: Install and test Vinyl client
+        run: |
+          HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_INSTALL_FROM_API=1 \
+            brew install --build-from-source delorenj/tap/vinyl-client
+          HOMEBREW_NO_AUTO_UPDATE=1 brew test delorenj/tap/vinyl-client
+
+  cask:
+    name: HeyMa cask (${{ matrix.runner }})
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [macos-15, macos-15-intel]
+    runs-on: ${{ matrix.runner }}
+    env:
+      HOMEBREW_NO_AUTO_UPDATE: "1"
+      HOMEBREW_NO_INSTALL_FROM_API: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Tap this checkout
+        run: brew tap delorenj/tap "$GITHUB_WORKSPACE"
+      - name: Style and audit
+        run: |
+          brew style --cask delorenj/tap/heyma
+          brew audit --cask --online delorenj/tap/heyma
+      - name: Install
+        run: brew install --cask delorenj/tap/heyma
+      - name: Verify the installed bundle
+        run: |
+          app=/Applications/HeyMa.app
+          test -d "$app"
+          cask_version="$(brew info --cask --json=v2 delorenj/tap/heyma | jq -r '.casks[0].version')"
+          plist="$app/Contents/Info.plist"
+          test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$plist")" = sh.delo.heyma
+          test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$plist")" = "$cask_version"
+          archs="$(lipo -archs "$app/Contents/MacOS/HeyMa")"
+          case "$archs" in *arm64*) ;; *) echo "missing arm64: $archs"; exit 1 ;; esac
+          case "$archs" in *x86_64*) ;; *) echo "missing x86_64: $archs"; exit 1 ;; esac
+          codesign --verify --strict --deep "$app"
+          if xattr -p com.apple.quarantine "$app" 2>/dev/null; then
+            echo "quarantine attribute survived postflight"; exit 1
+          fi
+      - name: Launch smoke test (no client installed)
+        run: |
+          /Applications/HeyMa.app/Contents/MacOS/HeyMa --background &
+          pid=$!
+          sleep 8
+          kill -0 "$pid"
+          kill "$pid"
+      - name: Uninstall
+        run: |
+          brew uninstall --cask delorenj/tap/heyma
+          test ! -e /Applications/HeyMa.app
