@@ -12,15 +12,15 @@ cask "heyma" do
     strategy :github_latest
   end
 
-  depends_on macos: ">= :ventura"
+  depends_on macos: :ventura
 
   app "HeyMa.app"
 
-  # The bundle is ad-hoc signed, not notarized. Clear the download quarantine
-  # so the first launch is not blocked by Gatekeeper.
-  postflight do
-    system_command "/usr/bin/xattr",
-                   args: ["-dr", "com.apple.quarantine", "#{appdir}/HeyMa.app"]
+  # The bundle is ad-hoc signed, not notarized. Homebrew propagates the download
+  # quarantine onto the staged bundle; clear it there, before the move into the
+  # app directory, so the first launch is not blocked by Gatekeeper.
+  preflight_steps do
+    run "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "{{staged_path}}/HeyMa.app"]
   end
 
   uninstall quit: "sh.delo.heyma"
