@@ -18,10 +18,10 @@ class VinylServer < Formula
     # directly under buildpath even though the release tarball has a named
     # top-level directory.
     package_root = buildpath
-    unless (package_root/"SERVER").file? &&
-           (package_root/"bin/vinyl").file? &&
-           (package_root/"bin/download-model").file? &&
-           !(package_root/"CLIENT_ONLY").exist?
+    server_payload = (package_root/"SERVER").file? &&
+                     (package_root/"bin/vinyl").file? &&
+                     (package_root/"bin/download-model").file?
+    if !server_payload || (package_root/"CLIENT_ONLY").exist?
       odie "release archive is not a Vinyl server payload " \
            "(needs SERVER, bin/vinyl and bin/download-model, and no CLIENT_ONLY)"
     end
@@ -29,7 +29,7 @@ class VinylServer < Formula
     # The whole payload goes into libexec: `vinyl-server setup` runs
     # <payload>/bin/download-model.
     package_root.children.each { |child| libexec.install child }
-    python = Formula["python@3.13"].opt_bin/"python3.13"
+    python = formula_opt_bin("python@3.13")/"python3.13"
     system python, "-m", "venv", libexec/"venv"
 
     resource("homebrew-wheelhouse").stage do
@@ -39,7 +39,7 @@ class VinylServer < Formula
       wheel_root = Dir.exist?(arch) ? arch : Dir["*/#{arch}"].first
       odie "wheelhouse is missing #{arch} wheels" unless wheel_root
 
-      wheels = Dir[File.join(wheel_root, "*.whl")].sort
+      wheels = Dir[File.join(wheel_root, "*.whl")]
       odie "wheelhouse contains no #{arch} wheels" if wheels.empty?
       system libexec/"venv/bin/python", "-m", "pip", "install",
              "--no-index", "--no-deps", *wheels
