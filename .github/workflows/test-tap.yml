@@ -148,7 +148,10 @@ jobs:
       - name: Style and audit
         run: |
           brew style delorenj/tap/vinyl-server
-          brew audit --strict --online delorenj/tap/vinyl-server
+          # Audit resolves python@3.13 through the API; with the API off an
+          # untapped homebrew/core on the arm64 image fails the dependency lookup.
+          env -u HOMEBREW_NO_INSTALL_FROM_API \
+            brew audit --strict --online delorenj/tap/vinyl-server
       - name: Reject a client payload (negative install)
         run: |
           tap_formulae="$(brew --repository delorenj/tap)/Formula"
@@ -189,13 +192,10 @@ jobs:
         run: brew test --verbose delorenj/tap/vinyl-server
       - name: Check the service definition
         run: |
-          prefix="$(brew --prefix delorenj/tap/vinyl-server)"
-          plist="$(find "$prefix" -maxdepth 1 -name '*.plist' | head -n 1)"
-          if [ -z "$plist" ]; then
-            ls -la "$prefix"
-            echo "no service plist in the keg"; exit 1
-          fi
-          echo "service plist: $plist"
+          # The keg carries no plist until `brew services start`, which this job
+          # never runs. Render the formula's service block the way brew would.
+          plist="$RUNNER_TEMP/sh.delo.vinyl.server.plist"
+          brew ruby -e 'puts Formulary.factory("delorenj/tap/vinyl-server").service.to_plist' > "$plist"
           plutil -p "$plist"
           label="$(plutil -extract Label raw -o - "$plist")"
           echo "Label: $label"
@@ -205,6 +205,12 @@ jobs:
           case "$args" in
             *"vinyl-server serve --host 127.0.0.1 --port 7733") ;;
             *) echo "unexpected ProgramArguments"; exit 1 ;;
+          esac
+          logpath="$(plutil -extract StandardOutPath raw -o - "$plist")"
+          echo "StandardOutPath: $logpath"
+          case "$logpath" in
+            */var/log/vinyl-server.log) ;;
+            *) echo "unexpected log path"; exit 1 ;;
           esac
       - name: Reinstall keeps the token and models
         run: |
