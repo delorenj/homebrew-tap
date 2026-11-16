@@ -188,6 +188,7 @@ jobs:
           "$prefix/libexec/venv/bin/python" -m pip list --format=freeze
           brew info delorenj/tap/vinyl-server | grep -F 'vinyl-server setup'
           brew info delorenj/tap/vinyl-server | grep -F '127.0.0.1:7733'
+          brew info delorenj/tap/vinyl-server | grep -F 'vinyl setup --server 127.0.0.1:7733'
       - name: Test
         run: brew test --verbose delorenj/tap/vinyl-server
       - name: Check the service definition

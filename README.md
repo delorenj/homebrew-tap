@@ -28,7 +28,7 @@ brew services start vinyl-client
 installs only a `vinyl-server` command and a `sh.delo.vinyl.server` service that
 binds `127.0.0.1:7733`. Run setup once (it downloads and verifies both models,
 mints `~/.config/vinyl/server.token` and pairs this Mac's client to the local
-server), then start the service. Pair the client formula to it:
+server), then start the service. Setup already pairs the client formula:
 
 ```sh
 brew install delorenj/tap/vinyl-server
@@ -36,9 +36,13 @@ vinyl-server setup
 brew services start vinyl-server
 
 brew install delorenj/tap/vinyl-client
-vinyl setup --server 127.0.0.1:7733
 brew services start vinyl-client
 ```
+
+`vinyl-server setup` already pairs the client. `vinyl setup --server 127.0.0.1:7733`
+(client formula) is only needed to re-pair a client that was pointed at another
+server, and is harmless to rerun. The service uses the default model directory
+`~/audio/models`; to keep models elsewhere, symlink that path.
 
 Upgrades keep the token and the models. `vinyl-server doctor` checks the install;
 the service logs to `$(brew --prefix)/var/log/vinyl-server.log`.

@@ -69,13 +69,15 @@ class VinylServer < Formula
         vinyl-server setup
         brew services start vinyl-server
 
-      With the client formula installed, point it at this server and start it:
-        vinyl setup --server 127.0.0.1:7733
+      `vinyl-server setup` already pairs the client. With the client formula
+      installed, start it:
         brew services start vinyl-client
+      `vinyl setup --server 127.0.0.1:7733` (client formula) is only needed to
+      re-pair a client that was pointed at another server, and is harmless to rerun.
 
-      Models live under ~/audio/models by default. To move them, set an absolute
-      VINYL_MODEL_DIR for `vinyl-server setup`, `vinyl-server doctor` and the
-      service alike (a brew service reads its own environment, not your shell's).
+      The service always uses the default model directory, ~/audio/models (brew
+      services does not pass your shell environment). To keep models elsewhere,
+      symlink ~/audio/models to that directory rather than setting VINYL_MODEL_DIR.
 
       Upgrades keep ~/.config/vinyl (the token and pairing) and the models. Restart
       the service after an upgrade when you are not dictating:
