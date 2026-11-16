@@ -2,7 +2,6 @@ class VinylServer < Formula
   desc "Live dictation server for macOS (a Mac that runs its own Vinyl serve)"
   homepage "https://github.com/delorenj/vinyl-client-releases"
   url "https://github.com/delorenj/vinyl-client-releases/releases/download/vinyl-server-v0.5.0/vinyl-server_0.5.0_macos.tar.gz"
-  version "0.5.0"
   sha256 "0567c3d545985df87b3907cf6cb5c3075ee74c92d272290ff04451f3827459ca"
 
   depends_on :macos
