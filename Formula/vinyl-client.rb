@@ -1,17 +1,17 @@
 class VinylClient < Formula
   desc "Live dictation thin client for macOS"
   homepage "https://github.com/delorenj/vinyl-client-releases"
-  url "https://github.com/delorenj/vinyl-client-releases/releases/download/v0.4.3/vinyl-client_0.4.3_macos.tar.gz"
-  version "0.4.3"
-  sha256 "fe678d8ec0454359f5e6b452341586ec62d8ffed300f306061991eb054960ff5"
+  url "https://github.com/delorenj/vinyl-client-releases/releases/download/v0.5.0/vinyl-client_0.5.0_macos.tar.gz"
+  version "0.5.0"
+  sha256 "bc077f32c23c2d4639cdd57952d74b12b867a0587dd39269b3a010214fbb8092"
 
   on_macos do
     depends_on "python@3.13"
   end
 
   resource "homebrew-wheelhouse" do
-    url "https://github.com/delorenj/vinyl-client-releases/releases/download/v0.4.3/vinyl-client_0.4.3_homebrew-wheelhouse.tar.gz"
-    sha256 "f9602850c9f5b2c7f996bf618297e59dc83c1ab8763e74adfc1dd1d2383dd750"
+    url "https://github.com/delorenj/vinyl-client-releases/releases/download/v0.5.0/vinyl-client_0.5.0_homebrew-wheelhouse.tar.gz"
+    sha256 "b7723b55fa26c42d337d0303f91ec84efb7663bfd348842f1eccb62a5e70bff2"
   end
 
   def install
@@ -72,14 +72,19 @@ class VinylClient < Formula
       Bind `vinyl-toggle` with your preferred macOS shortcut manager.
       Native menu-bar/settings UI, installed into /Applications:
         brew install --cask delorenj/tap/heyma
-      (A copy also ships at "#{opt_libexec}/HeyMa.app".) Do not run the direct
-      installer over a Brew-managed client.
+      Do not run the direct installer over a Brew-managed client.
+
+      To dictate against this Mac's own server instead (audio never leaves it):
+        brew install delorenj/tap/vinyl-server
+      Already paired to a remote server and want to keep that pairing valid?
+      Copy its server.token to ~/.config/vinyl/server.token (0600) BEFORE
+      `vinyl-server setup`, so both servers accept the one client token.
     EOS
   end
 
   test do
     help = shell_output("#{bin}/vinyl --help")
-    assert_match "{client,setup,doctor,toggle,start,stop,cancel,status,trace,fix}", help
+    assert_match "{client,setup,doctor,toggle,start,stop,cancel,status,trace,fix,prominence,polish}", help
     raise "client archive advertised recognizer modes" if help.include?("{daemon")
     assert_match "trace", shell_output("#{bin}/vinyl trace --help")
     assert_match "fix", shell_output("#{bin}/vinyl fix --help")
