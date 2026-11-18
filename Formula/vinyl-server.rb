@@ -1,15 +1,15 @@
 class VinylServer < Formula
   desc "Live dictation server for macOS (a Mac that runs its own Vinyl serve)"
   homepage "https://github.com/delorenj/vinyl-client-releases"
-  url "https://github.com/delorenj/vinyl-client-releases/releases/download/vinyl-server-v0.5.0/vinyl-server_0.5.0_macos.tar.gz"
-  sha256 "0567c3d545985df87b3907cf6cb5c3075ee74c92d272290ff04451f3827459ca"
+  url "https://github.com/delorenj/vinyl-client-releases/releases/download/vinyl-server-v0.5.1/vinyl-server_0.5.1_macos.tar.gz"
+  sha256 "75767a6544dc719b07306214456c9561adfd1efacfc86119b5587f43d618efd8"
 
   depends_on :macos
   depends_on "python@3.13"
 
   resource "homebrew-wheelhouse" do
-    url "https://github.com/delorenj/vinyl-client-releases/releases/download/vinyl-server-v0.5.0/vinyl-server_0.5.0_homebrew-wheelhouse.tar.gz"
-    sha256 "3e2182d2be4f419ca0c32d4e3a5d3d8823bd4583e3ba8cb71839d61a1bc22a16"
+    url "https://github.com/delorenj/vinyl-client-releases/releases/download/vinyl-server-v0.5.1/vinyl-server_0.5.1_homebrew-wheelhouse.tar.gz"
+    sha256 "1c6f1d18de65c4844b83ae00f0c4c27af95479bee4bf46746d6f6e64ac66d68f"
   end
 
   def install
@@ -75,6 +75,11 @@ class VinylServer < Formula
       `vinyl setup --server 127.0.0.1:7733` (client formula) is only needed to
       re-pair a client that was pointed at another server, and is harmless to rerun.
 
+      A client already paired to another server (big-chungus) keeps that pairing:
+      setup seeds server.token from the client's existing token, so one token works
+      on both. Switch back with `vinyl setup --server HOST:PORT`, then
+      `brew services restart vinyl-client`.
+
       The service always uses the default model directory, ~/audio/models (brew
       services does not pass your shell environment). To keep models elsewhere,
       symlink ~/audio/models to that directory rather than setting VINYL_MODEL_DIR.
@@ -111,6 +116,8 @@ class VinylServer < Formula
       output = shell_output("#{bin}/vinyl-server serve --host 127.0.0.1 --port 17733 2>&1", 1)
       assert_match "missing model file", output
       assert_match "parakeet-tdt-0.6b-v3-Q8_0.gguf", output
+      assert_match "run `vinyl-server setup`", output
+      refute_match "Traceback", output
     end
   end
 end

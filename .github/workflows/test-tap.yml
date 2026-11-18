@@ -160,7 +160,7 @@ jobs:
           # Same formula, but pinned to the client archive (it carries CLIENT_ONLY).
           sed -E \
             -e 's/^class VinylServer </class VinylServerWrongPayload </' \
-            -e 's|^  url ".*vinyl-server_0\.5\.0_macos\.tar\.gz"|  url "https://github.com/delorenj/vinyl-client-releases/releases/download/v0.4.3/vinyl-client_0.4.3_macos.tar.gz"|' \
+            -e 's|^  url ".*vinyl-server_[0-9.]+_macos\.tar\.gz"|  url "https://github.com/delorenj/vinyl-client-releases/releases/download/v0.4.3/vinyl-client_0.4.3_macos.tar.gz"|' \
             -e 's/^  sha256 "[0-9a-f]+"/  sha256 "fe678d8ec0454359f5e6b452341586ec62d8ffed300f306061991eb054960ff5"/' \
             "$GITHUB_WORKSPACE/Formula/vinyl-server.rb" > "$wrong"
           grep -q 'class VinylServerWrongPayload' "$wrong"
