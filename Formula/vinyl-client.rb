@@ -1,17 +1,17 @@
 class VinylClient < Formula
   desc "Live dictation thin client for macOS"
   homepage "https://github.com/delorenj/vinyl-client-releases"
-  url "https://github.com/delorenj/vinyl-client-releases/releases/download/v0.5.0/vinyl-client_0.5.0_macos.tar.gz"
-  version "0.5.0"
-  sha256 "bc077f32c23c2d4639cdd57952d74b12b867a0587dd39269b3a010214fbb8092"
+  url "https://github.com/delorenj/vinyl-client-releases/releases/download/v0.5.1/vinyl-client_0.5.1_macos.tar.gz"
+  version "0.5.1"
+  sha256 "eed4a45e01b7c5b6d78499b671e2fd5c6be138513b1262ff9dbfae0c5cafa248"
 
   on_macos do
     depends_on "python@3.13"
   end
 
   resource "homebrew-wheelhouse" do
-    url "https://github.com/delorenj/vinyl-client-releases/releases/download/v0.5.0/vinyl-client_0.5.0_homebrew-wheelhouse.tar.gz"
-    sha256 "b7723b55fa26c42d337d0303f91ec84efb7663bfd348842f1eccb62a5e70bff2"
+    url "https://github.com/delorenj/vinyl-client-releases/releases/download/v0.5.1/vinyl-client_0.5.1_homebrew-wheelhouse.tar.gz"
+    sha256 "e5fa254fd6e8e96ce17531ace08752e9b3b1959ab1e1d2dca0c7c97f7c36c838"
   end
 
   def install

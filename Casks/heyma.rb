@@ -1,29 +1,29 @@
 cask "heyma" do
-  version "0.4.4"
-  sha256 "dfb1fc6b8292108ed439a55b800ae7cb524c507dc2e5df16b054a89a77aab391"
+  version "0.5.0"
+  sha256 "5af898a6d4f06d551c58e1c255fc6d7839ac5ce78b231659844be68b77033efe"
 
-  url "https://github.com/delorenj/vinyl-client-releases/releases/download/v#{version}/HeyMa-#{version}-macos-universal.zip"
+  url "https://github.com/delorenj/vinyl-client-releases/releases/download/heyma-v#{version}/HeyMa-#{version}-macos-universal.zip"
   name "HeyMa"
-  desc "Menu-bar dictation control and settings for the Vinyl client"
+  desc "Menu-bar shell for HeyMa: dictation, Vinyl and Phonograph"
   homepage "https://github.com/delorenj/vinyl-client-releases"
 
+  # Client releases (v<ver>, vinyl-server-v<ver>) share this repo; only the
+  # heyma-v<ver> tags are the app, whichever release GitHub marks Latest.
   livecheck do
     url :url
-    strategy :github_latest
+    regex(/^heyma-v(\d+(?:\.\d+)+)$/i)
+    strategy :github_releases do |json, regex|
+      json.filter_map do |release|
+        next if release["draft"] || release["prerelease"]
+
+        release["tag_name"]&.[](regex, 1)
+      end
+    end
   end
 
   depends_on macos: :ventura
 
   app "HeyMa.app"
-
-  # The bundle is ad-hoc signed, not notarized. Homebrew propagates the download
-  # quarantine onto the staged bundle; clear it there, before the move into the
-  # app directory, so the first launch is not blocked by Gatekeeper.
-  preflight_steps do
-    # Not fatal: under --no-quarantine there is no attribute to remove.
-    run "/usr/bin/xattr", args:         ["-dr", "com.apple.quarantine", "{{staged_path}}/HeyMa.app"],
-                          must_succeed: false
-  end
 
   uninstall quit: "sh.delo.heyma"
 

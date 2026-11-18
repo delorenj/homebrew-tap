@@ -91,9 +91,15 @@ jobs:
           case "$archs" in *arm64*) ;; *) echo "missing arm64: $archs"; exit 1 ;; esac
           case "$archs" in *x86_64*) ;; *) echo "missing x86_64: $archs"; exit 1 ;; esac
           codesign --verify --strict --deep "$app"
-          if xattr -p com.apple.quarantine "$app" 2>/dev/null; then
-            echo "quarantine attribute survived postflight"; exit 1
-          fi
+          # Notarized app: Developer ID, our team, a stapled ticket, and Gatekeeper
+          # accepts it with the download quarantine left in place.
+          details="$(codesign -dvv "$app" 2>&1)"
+          printf '%s\n' "$details"
+          printf '%s\n' "$details" | grep -q 'Authority=Developer ID Application: Jarad DeLorenzo (YJ7W7Z36FP)'
+          printf '%s\n' "$details" | grep -q 'TeamIdentifier=YJ7W7Z36FP'
+          printf '%s\n' "$details" | grep -q 'flags=0x[0-9a-f]*(.*runtime'
+          xcrun stapler validate "$app"
+          spctl -a -vvv -t exec "$app"
       - name: Launch smoke test (no client installed)
         run: |
           /Applications/HeyMa.app/Contents/MacOS/HeyMa --background &

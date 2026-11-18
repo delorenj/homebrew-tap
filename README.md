@@ -59,5 +59,7 @@ Use the full `delorenj/tap/...` names: current Homebrew only loads a
 non-official tap's packages once trusted, and installing by full name trusts
 them (or run `brew trust --tap delorenj/tap` once).
 
-The app is ad-hoc signed, not notarized; the cask clears the download
-quarantine so it opens normally.
+The app is signed with a Developer ID (team YJ7W7Z36FP), hardened runtime,
+notarized and stapled, so Gatekeeper accepts it with the download quarantine
+left in place. Its releases are the `heyma-v<ver>` tags of
+`delorenj/vinyl-client-releases`.
